@@ -59,8 +59,8 @@ function test(input, data) {
   }) || null
 }
 
-function parseFiles(path, data) {
-
+function* parseFiles(path, data) {
+  yield 'test'
 }
 
 module.exports = {

@@ -8,7 +8,7 @@
   "main": "index.js",
   "repository": "metaraine/prefixnote",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --compilers js:babel/register"
   },
   "keywords": [
     "string",
@@ -24,7 +24,9 @@
   "author": "Raine Lourie",
   "license": "ISC",
   "devDependencies": {
+    "babel": "^5.8.23",
     "chai": "^3.2.0",
+    "chai-things": "^0.2.0",
     "mocha": "^2.3.0"
   },
   "dependencies": {

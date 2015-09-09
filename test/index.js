@@ -1,4 +1,6 @@
-var should = require('chai').should()
+var chai = require('chai')
+var should = chai.should()
+chai.use(require('chai-things'))
 var prefixnote = require('../index.js')
 
 describe('prefixnote', function() {
@@ -176,6 +178,31 @@ describe('prefixnote', function() {
 
       should.equal(prefixnote.test('{a}{b}', {}), null)
 
+    })
+
+  })
+
+
+  describe('parseFiles', function() {
+
+    var parsedStream, resolvedFiles
+
+    before(function () {
+
+      parsedStream = prefixnote.parseFiles('./templates', {
+        a: true,
+        b: true,
+        aa: true
+      })
+
+      resolvedFiles = Array.from(parsedStream)
+      should.exist(resolvedFiles)
+
+    })
+
+    it('should copy unprefixed files', function() {
+      resolvedFiles.should.include('LICENSE')
+      // resolvedFiles.should.include.something.that.deep.equals
     })
 
   })

@@ -1,0 +1,19 @@
+{
+  "name": "<%=project%>",
+  "version": "0.0.0",
+  "description": "<%=description%>",
+  "license": "ISC",
+  "repository": "<%=username%>/<%=project%>",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  <%if(cli) {
+    %>"bin": {
+    "<%=project%>": "bin.js"
+  },
+  "preferGlobal": true<%
+  }%><%if(keywords.length) {
+    %>,
+  "keywords": <%=prettyArray(keywords)%>,
+  <%}%>
+}
