@@ -4,7 +4,7 @@
 
 Annotate strings with simple, embedded prefix expressions.
 
-Used by [yoga](https://github.com/metaraine/yoga)
+Used by [yoga](https://github.com/metaraine/yoga).
 
 ## Install
 

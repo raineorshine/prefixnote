@@ -191,7 +191,7 @@ describe('prefixnote', function() {
         a: false,
         b: false
       }))
-      parsedArray.then(function (result) {
+      return parsedArray.then(function (result) {
         result.should.include('package.json')
         result.should.include('LICENSE')
         result.should.include('README.md')
@@ -207,7 +207,7 @@ describe('prefixnote', function() {
         a2: false,
         b: false
       }))
-      parsedArray.then(function (result) {
+      return parsedArray.then(function (result) {
         result.should.include('package.json')
         result.should.include('LICENSE')
         result.should.include('README.md')
@@ -224,7 +224,7 @@ describe('prefixnote', function() {
         a: false,
         b: true
       }))
-      parsedArray.then(function (result) {
+      return parsedArray.then(function (result) {
         result.should.include('package.json')
         result.should.include('LICENSE')
         result.should.include('README.md')
