@@ -9,7 +9,14 @@ var allExpressionsRegex = /{(.*?)}/g
 var expressionRegex     = /([^:]*)?(?::\s*(.*))?/
 var argsRegex           = /\s*,\s*/
 
-// parses a single prefix expression
+/**
+ * Parses a prefixnote expression.
+ *   e.g. foo
+ *        foo && bar
+ *        foo:val1
+ *        foo:arg1=val1
+ * @returns { expression, args, options }
+ */
 function parseExpression(str) {
 
   var expMatches = str.match(expressionRegex)
@@ -30,6 +37,10 @@ function parseExpression(str) {
   }
 }
 
+/**
+ * Parses a string with one or more prefixnote expressions. Extracts and parses each expression.
+ * @returns { original, value, expressions }
+ */
 function parse(str) {
 
   // find the prefix expressions and the main value
@@ -50,15 +61,25 @@ function parse(str) {
   }
 }
 
-function test(input, data) {
+/**
+ * A boolean function that checks if the given prefixnote (taken to be a conditional) evaluates to true or false for the given data.
+ * @param prefixnote     May be an unparsed prefixnote string or a parsed prefixnote object (e.g. { original, value, expressions }).
+ * @returns Boolean
+ */
+function test(prefixnote, data) {
 
-  var parsed = typeof input === 'string' ? parse(input) : input
+  var parsed = typeof prefixnote === 'string' ? parse(prefixnote) : prefixnote
   return find(parsed.expressions, function (exp) {
     var ast = esprima.parse(exp.expression).body[0].expression
     return staticEval(ast, data)
   }) || null
 }
 
+// TODO: Convert to a generator function.
+/**
+ * Recursively traverses a file tree starting at the given path, treating each filename as a prefixnote. If the prefixnote evalutes to true for the given data, the branch is traversed, otherwise it is ignored.
+ * @returns A stream of parsed filenames.
+ */
 function* parseFiles(path, data) {
   yield 'test'
 }
