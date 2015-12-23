@@ -1,3 +1,4 @@
+var Readable   = require('stream').Readable
 var esprima    = require('esprima')
 var staticEval = require('static-eval')
 var compact    = require('lodash.compact')
@@ -10,7 +11,7 @@ var expressionRegex     = /([^:]*)?(?::\s*(.*))?/
 var argsRegex           = /\s*,\s*/
 
 /**
- * Parses a prefixnote expression.
+ * Private function that parses a prefixnote expression.
  *   e.g. foo
  *        foo && bar
  *        foo:val1
@@ -80,8 +81,13 @@ function test(prefixnote, data) {
  * Recursively traverses a file tree starting at the given path, treating each filename as a prefixnote. If the prefixnote evalutes to true for the given data, the branch is traversed, otherwise it is ignored.
  * @returns A stream of parsed filenames.
  */
-function* parseFiles(path, data) {
-  yield 'test'
+function parseFiles(path, data) {
+  var stream = new Readable({ objectMode: true })
+  stream.push('a')
+  stream.push('b')
+  stream.push('c')
+  stream.push(null)
+  return stream
 }
 
 module.exports = {

@@ -27,7 +27,8 @@
     "babel": "^5.8.23",
     "chai": "^3.2.0",
     "chai-things": "^0.2.0",
-    "mocha": "^2.3.0"
+    "mocha": "^2.3.0",
+    "stream-to-array": "^2.2.0"
   },
   "dependencies": {
     "esprima": "^2.6.0",

@@ -2,6 +2,7 @@ var chai = require('chai')
 var should = chai.should()
 chai.use(require('chai-things'))
 var prefixnote = require('../index.js')
+var toArray = require('stream-to-array')
 
 describe('prefixnote', function() {
 
@@ -185,24 +186,51 @@ describe('prefixnote', function() {
 
   describe('parseFiles', function() {
 
-    var parsedStream, resolvedFiles
-
-    before(function () {
-
-      parsedStream = prefixnote.parseFiles('./templates', {
-        a: true,
-        b: true,
-        aa: true
+    it('should only parse files whose prefix evaluates to true', function() {
+      var parsedArray = toArray(prefixnote.parseFiles('./sample', {
+        a: false,
+        b: false
+      }))
+      parsedArray.then(function (result) {
+        result.should.include('package.json')
+        result.should.include('LICENSE')
+        result.should.include('README.md')
+        result.should.not.include('1')
+        result.should.not.include('a/3')
       })
-
-      resolvedFiles = Array.from(parsedStream)
-      should.exist(resolvedFiles)
-
     })
 
-    it('should copy unprefixed files', function() {
-      resolvedFiles.should.include('LICENSE')
-      // resolvedFiles.should.include.something.that.deep.equals
+    it('should parse nested folders', function() {
+      var parsedArray = toArray(prefixnote.parseFiles('./sample', {
+        a: true,
+        a1: true,
+        a2: false,
+        b: false
+      }))
+      parsedArray.then(function (result) {
+        result.should.include('package.json')
+        result.should.include('LICENSE')
+        result.should.include('README.md')
+        result.should.not.include('1')
+        result.should.include('a/1')
+        result.should.not.include('a/2')
+        result.should.include('a/3')
+        result.should.include('a/4')
+      })
+    })
+
+    it('should parse files in null folders as children of the parent', function() {
+      var parsedArray = toArray(prefixnote.parseFiles('./sample', {
+        a: false,
+        b: true
+      }))
+      parsedArray.then(function (result) {
+        result.should.include('package.json')
+        result.should.include('LICENSE')
+        result.should.include('README.md')
+        result.should.include('1')
+        result.should.include('2')
+      })
     })
 
   })
