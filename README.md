@@ -4,7 +4,7 @@
 
 Annotate strings with simple, embedded prefix expressions.
 
-Used by [yoga](https://github.com/metaraine/yoga).
+Used by [yoga](https://github.com/metaraine/generator-yoga).
 
 ## Install
 
@@ -58,7 +58,7 @@ prefixnote.test('{a:hi}{b:bye}', { b:true }) // { expression: 'b', args: ['bye']
 
 ## Other Usage
 
-Use prefixnotes as smart file filters (used by [yoga](https://github.com/metaraine/yoga)).
+Use prefixnotes as smart file filters (used by [yoga](https://github.com/metaraine/generator-yoga)).
 
 ```js
 prefixnote.parseFiles('test/sample', {
