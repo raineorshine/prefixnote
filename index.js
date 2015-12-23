@@ -63,9 +63,9 @@ function parse(str) {
 }
 
 /**
- * A boolean function that checks if the given prefixnote (taken to be a conditional) evaluates to true or false for the given data.
+ * Evaluates the given prefixnote with the given data.
  * @param prefixnote     May be an unparsed prefixnote string or a parsed prefixnote object (e.g. { original, value, expressions }).
- * @returns Boolean
+ * @returns An object with the first expression that evaluates to true, otherwise returns null.
  */
 function test(prefixnote, data) {
 

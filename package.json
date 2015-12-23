@@ -1,7 +1,7 @@
 {
   "name": "prefixnote",
   "version": "0.0.0",
-  "description": "Annotate strings with simple, embedded prefix expressions",
+  "description": "Annotate strings with simple, embedded prefix expressions.",
   "engines": {
     "node": ">=0.10.0"
   },
@@ -16,7 +16,7 @@
     "annotate",
     "annotation",
     "embedded",
-    "prefex",
+    "prefix",
     "language",
     "dsl",
     "filter"
