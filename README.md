@@ -2,8 +2,9 @@
 [![npm version](https://img.shields.io/npm/v/prefixnote.svg)](https://npmjs.org/package/prefixnote) 
 [![Build Status](https://travis-ci.org/metaraine/prefixnote.svg?branch=master)](https://travis-ci.org/metaraine/prefixnote)
 
-> Annotate strings with simple, embedded prefix expressions.
+Annotate strings with simple, embedded prefix expressions.
 
+Used by [yoga](https://github.com/metaraine/yoga)
 
 ## Install
 
@@ -30,13 +31,13 @@ prefixnote.test('{a}{b}', { b:true }) // { expression: 'b', args: [], options: {
 prefixnote.test('{a}{b}', {}), null)
 ```
 
-Use prefixnotes as smart file filters (used by [yoga](https://github.com/metaraine/yoga)):
+Use prefixnotes as smart file filters (used by [yoga](https://github.com/metaraine/yoga)).
 
 ```js
 prefixnote.parseFiles('./sample', {
-        a: false,
-        b: false
-      })
+  a: false,
+  b: false
+})
 ```
 
 Parse prefixnotes and then do whatever you want with them.
