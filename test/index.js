@@ -1,8 +1,11 @@
 var chai = require('chai')
 var should = chai.should()
-chai.use(require('chai-things'))
 var prefixnote = require('../index.js')
 var toArray = require('stream-to-array')
+var Promise = require('bluebird')
+
+chai.use(require('chai-things'))
+chai.use(require("chai-as-promised"));
 
 describe('prefixnote', function() {
 
@@ -122,6 +125,22 @@ describe('prefixnote', function() {
 
   describe('test', function() {
 
+    it('should pass for plain strings', function() {
+      prefixnote.test('test', { a: true }).should.eql({
+        expression: null,
+        args: [],
+        options: {}
+      })
+    })
+
+    it('should pass for empty expressions', function() {
+      prefixnote.test('{}test', { a: true }).should.eql({
+        expression: null,
+        args: [],
+        options: {}
+      })
+    })
+
     it('should evaluate a simple expression with the given data', function() {
       prefixnote.test('{a}', { a: true }).should.eql({
         expression: 'a',
@@ -187,50 +206,102 @@ describe('prefixnote', function() {
   describe('parseFiles', function() {
 
     it('should only parse files whose prefix evaluates to true', function() {
-      var parsedArray = toArray(prefixnote.parseFiles('./sample', {
+      var parsedArray = toArray(prefixnote.parseFiles('test/sample', {
         a: false,
         b: false
       }))
-      return parsedArray.then(function (result) {
-        result.should.include('package.json')
-        result.should.include('LICENSE')
-        result.should.include('README.md')
-        result.should.not.include('1')
-        result.should.not.include('a/3')
-      })
+      return Promise.join(
+        parsedArray.should.eventually.include({
+          original: 'test/sample/{}package.json',
+          parsed: 'test/sample/package.json',
+          parsedObject: { expression: null, args: [], options: {} }
+        }),
+        parsedArray.should.eventually.include({
+          original: 'test/sample/LICENSE',
+          parsed: 'test/sample/LICENSE',
+          parsedObject: { expression: null, args: [], options: {} }
+        }),
+        parsedArray.should.eventually.include({
+          original: 'test/sample/README.md',
+          parsed: 'test/sample/README.md',
+          parsedObject: { expression: null, args: [], options: {} }
+        })
+      )
     })
 
     it('should parse nested folders', function() {
-      var parsedArray = toArray(prefixnote.parseFiles('./sample', {
+      var parsedArray = toArray(prefixnote.parseFiles('test/sample', {
         a: true,
         a1: true,
         a2: false,
         b: false
-      }))
-      return parsedArray.then(function (result) {
-        result.should.include('package.json')
-        result.should.include('LICENSE')
-        result.should.include('README.md')
-        result.should.not.include('1')
-        result.should.include('a/1')
-        result.should.not.include('a/2')
-        result.should.include('a/3')
-        result.should.include('a/4')
-      })
+      }))//.tap(console.log)
+      return Promise.join(
+        parsedArray.should.eventually.include({
+          original: 'test/sample/{}package.json',
+          parsed: 'test/sample/package.json',
+          parsedObject: { expression: null, args: [], options: {} }
+        }),
+        parsedArray.should.eventually.include({
+          original: 'test/sample/LICENSE',
+          parsed: 'test/sample/LICENSE',
+          parsedObject: { expression: null, args: [], options: {} }
+        }),
+        parsedArray.should.eventually.include({
+          original: 'test/sample/README.md',
+          parsed: 'test/sample/README.md',
+          parsedObject: { expression: null, args: [], options: {} }
+        }),
+        parsedArray.should.eventually.include({
+          original: 'test/sample/{a}a/{a1}1',
+          parsed: 'test/sample/a/1',
+          parsedObject: { expression: 'a1', args: [], options: {} }
+        }),
+        parsedArray.should.eventually.include({
+          original: 'test/sample/{a}a/3',
+          parsed: 'test/sample/a/3',
+          parsedObject: { expression: null, args: [], options: {} }
+        }),
+        parsedArray.should.eventually.include({
+          original: 'test/sample/{a}a/4',
+          parsed: 'test/sample/a/4',
+          parsedObject: { expression: null, args: [], options: {} }
+        })
+      )
     })
 
     it('should parse files in null folders as children of the parent', function() {
-      var parsedArray = toArray(prefixnote.parseFiles('./sample', {
+      var parsedArray = toArray(prefixnote.parseFiles('test/sample', {
         a: false,
         b: true
       }))
-      return parsedArray.then(function (result) {
-        result.should.include('package.json')
-        result.should.include('LICENSE')
-        result.should.include('README.md')
-        result.should.include('1')
-        result.should.include('2')
-      })
+      return Promise.join(
+        parsedArray.should.eventually.include({
+          original: 'test/sample/{}package.json',
+          parsed: 'test/sample/package.json',
+          parsedObject: { expression: null, args: [], options: {} }
+        }),
+        parsedArray.should.eventually.include({
+          original: 'test/sample/LICENSE',
+          parsed: 'test/sample/LICENSE',
+          parsedObject: { expression: null, args: [], options: {} }
+        }),
+        parsedArray.should.eventually.include({
+          original: 'test/sample/README.md',
+          parsed: 'test/sample/README.md',
+          parsedObject: { expression: null, args: [], options: {} }
+        }),
+        parsedArray.should.eventually.include({
+          original: 'test/sample/{b}/1',
+          parsed: 'test/sample/1',
+          parsedObject: { expression: null, args: [], options: {} }
+        }),
+        parsedArray.should.eventually.include({
+          original: 'test/sample/{b}/2',
+          parsed: 'test/sample/2',
+          parsedObject: { expression: null, args: [], options: {} }
+        })
+      )
     })
 
   })

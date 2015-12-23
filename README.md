@@ -61,8 +61,8 @@ prefixnote.test('{a:hi}{b:bye}', { b:true }) // { expression: 'b', args: ['bye']
 Use prefixnotes as smart file filters (used by [yoga](https://github.com/metaraine/yoga)).
 
 ```js
-prefixnote.parseFiles('./sample', {
-  a: false,
+prefixnote.parseFiles('test/sample', {
+  a: true,
   b: false
 })
 ```
