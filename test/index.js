@@ -1,5 +1,7 @@
+const path = require('path')
 var chai = require('chai')
 var should = chai.should()
+var expect = chai.expect
 var prefixnote = require('../index.js')
 var toArray = require('stream-to-array')
 var Promise = require('bluebird')
@@ -206,99 +208,99 @@ describe('prefixnote', function() {
   describe('parseFiles', function() {
 
     it('should only parse files whose prefix evaluates to true', function() {
-      var parsedArray = toArray(prefixnote.parseFiles('test/sample', {
+      var parsedArray = toArray(prefixnote.parseFiles(path.join('test/sample'), {
         a: false,
         b: false
       }))
       return Promise.join(
-        parsedArray.should.eventually.include({
-          original: 'test/sample/{}package.json',
-          parsed: 'test/sample/package.json',
+        parsedArray.should.eventually.deep.include({
+          original: path.join('test/sample/{}package.json'),
+          parsed: path.join('test/sample/package.json'),
           parsedObject: { expression: null, args: [], options: {} }
         }),
-        parsedArray.should.eventually.include({
-          original: 'test/sample/LICENSE',
-          parsed: 'test/sample/LICENSE',
+        parsedArray.should.eventually.deep.include({
+          original: path.join('test/sample/README.md'),
+          parsed: path.join('test/sample/README.md'),
           parsedObject: { expression: null, args: [], options: {} }
         }),
-        parsedArray.should.eventually.include({
-          original: 'test/sample/README.md',
-          parsed: 'test/sample/README.md',
+        parsedArray.should.eventually.deep.include({
+          original: path.join('test/sample/LICENSE'),
+          parsed: path.join('test/sample/LICENSE'),
           parsedObject: { expression: null, args: [], options: {} }
         })
       )
     })
 
     it('should parse nested folders', function() {
-      var parsedArray = toArray(prefixnote.parseFiles('test/sample', {
+      var parsedArray = toArray(prefixnote.parseFiles(path.join('test/sample'), {
         a: true,
         a1: true,
         a2: false,
         b: false
       }))//.tap(console.log)
       return Promise.join(
-        parsedArray.should.eventually.include({
-          original: 'test/sample/{}package.json',
-          parsed: 'test/sample/package.json',
+        parsedArray.should.eventually.deep.include({
+          original: path.join('test/sample/{}package.json'),
+          parsed: path.join('test/sample/package.json'),
           parsedObject: { expression: null, args: [], options: {} }
         }),
-        parsedArray.should.eventually.include({
-          original: 'test/sample/LICENSE',
-          parsed: 'test/sample/LICENSE',
+        parsedArray.should.eventually.deep.include({
+          original: path.join('test/sample/LICENSE'),
+          parsed: path.join('test/sample/LICENSE'),
           parsedObject: { expression: null, args: [], options: {} }
         }),
-        parsedArray.should.eventually.include({
-          original: 'test/sample/README.md',
-          parsed: 'test/sample/README.md',
+        parsedArray.should.eventually.deep.include({
+          original: path.join('test/sample/README.md'),
+          parsed: path.join('test/sample/README.md'),
           parsedObject: { expression: null, args: [], options: {} }
         }),
-        parsedArray.should.eventually.include({
-          original: 'test/sample/{a}a/{a1}1',
-          parsed: 'test/sample/a/1',
+        parsedArray.should.eventually.deep.include({
+          original: path.join('test/sample/{a}a/{a1}1'),
+          parsed: path.join('test/sample/a/1'),
           parsedObject: { expression: 'a1', args: [], options: {} }
         }),
-        parsedArray.should.eventually.include({
-          original: 'test/sample/{a}a/3',
-          parsed: 'test/sample/a/3',
+        parsedArray.should.eventually.deep.include({
+          original: path.join('test/sample/{a}a/3'),
+          parsed: path.join('test/sample/a/3'),
           parsedObject: { expression: null, args: [], options: {} }
         }),
-        parsedArray.should.eventually.include({
-          original: 'test/sample/{a}a/4',
-          parsed: 'test/sample/a/4',
+        parsedArray.should.eventually.deep.include({
+          original: path.join('test/sample/{a}a/4'),
+          parsed: path.join('test/sample/a/4'),
           parsedObject: { expression: null, args: [], options: {} }
         })
       )
     })
 
     it('should parse files in null folders as children of the parent', function() {
-      var parsedArray = toArray(prefixnote.parseFiles('test/sample', {
+      var parsedArray = toArray(prefixnote.parseFiles(path.join('test/sample'), {
         a: false,
         b: true
       }))
       return Promise.join(
-        parsedArray.should.eventually.include({
-          original: 'test/sample/{}package.json',
-          parsed: 'test/sample/package.json',
+        parsedArray.should.eventually.deep.include({
+          original: path.join('test/sample/{}package.json'),
+          parsed: path.join('test/sample/package.json'),
           parsedObject: { expression: null, args: [], options: {} }
         }),
-        parsedArray.should.eventually.include({
-          original: 'test/sample/LICENSE',
-          parsed: 'test/sample/LICENSE',
+        parsedArray.should.eventually.deep.include({
+          original: path.join('test/sample/LICENSE'),
+          parsed: path.join('test/sample/LICENSE'),
           parsedObject: { expression: null, args: [], options: {} }
         }),
-        parsedArray.should.eventually.include({
-          original: 'test/sample/README.md',
-          parsed: 'test/sample/README.md',
+        parsedArray.should.eventually.deep.include({
+          original: path.join('test/sample/README.md'),
+          parsed: path.join('test/sample/README.md'),
           parsedObject: { expression: null, args: [], options: {} }
         }),
-        parsedArray.should.eventually.include({
-          original: 'test/sample/{b}/1',
-          parsed: 'test/sample/1',
+        parsedArray.should.eventually.deep.include({
+          original: path.join('test/sample/{b}/1'),
+          parsed: path.join('test/sample/1'),
           parsedObject: { expression: null, args: [], options: {} }
         }),
-        parsedArray.should.eventually.include({
-          original: 'test/sample/{b}/2',
-          parsed: 'test/sample/2',
+        parsedArray.should.eventually.deep.include({
+          original: path.join('test/sample/{b}/2'),
+          parsed: path.join('test/sample/2'),
           parsedObject: { expression: null, args: [], options: {} }
         })
       )
