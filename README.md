@@ -1,10 +1,10 @@
 # prefixnote
 [![npm version](https://img.shields.io/npm/v/prefixnote.svg)](https://npmjs.org/package/prefixnote) 
-[![Build Status](https://travis-ci.org/metaraine/prefixnote.svg?branch=master)](https://travis-ci.org/metaraine/prefixnote)
+[![Build Status](https://travis-ci.org/raineorshine/prefixnote.svg?branch=master)](https://travis-ci.org/raineorshine/prefixnote)
 
 Annotate strings with simple, embedded prefix expressions.
 
-Used by [yoga](https://github.com/metaraine/generator-yoga).
+Used by [yoga](https://github.com/raineorshine/generator-yoga).
 
 ## Install
 
@@ -58,7 +58,7 @@ prefixnote.test('{a:hi}{b:bye}', { b:true }) // { expression: 'b', args: ['bye']
 
 ## Other Usage
 
-Use prefixnotes as smart file filters (used by [yoga](https://github.com/metaraine/generator-yoga)).
+Use prefixnotes as smart file filters (used by [yoga](https://github.com/raineorshine/generator-yoga)).
 
 ```js
 prefixnote.parseFiles('test/sample', {
@@ -96,4 +96,4 @@ prefixnote.parse('{a}{b}test')
 
 ## License
 
-ISC © [Raine Lourie](https://github.com/metaraine)
+ISC © [Raine Revere](https://github.com/raineorshine)
