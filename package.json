@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "description": "Annotate strings with simple, embedded prefix expressions.",
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=10"
   },
   "main": "index.js",
   "repository": "metaraine/prefixnote",
@@ -33,9 +33,9 @@
   "dependencies": {
     "bluebird": "^3.7.2",
     "esprima": "^4.0.1",
-    "lodash.compact": "^3.0.0",
-    "lodash.find": "^3.2.1",
+    "lodash.compact": "^3.0.1",
+    "lodash.find": "^4.6.0",
     "regexp.execall": "^1.0.2",
-    "static-eval": "^2.0.2"
+    "static-eval": "^2.0.3"
   }
 }
