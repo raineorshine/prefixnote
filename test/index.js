@@ -3,307 +3,297 @@ const chai = require('chai')
 const should = chai.should()
 const prefixnote = require('../index.js')
 const toArray = require('stream-to-array')
-const Promise = require('bluebird')
 
 chai.use(require('chai-things'))
 chai.use(require('chai-as-promised'))
 
-describe('prefixnote', function() {
+describe('parse', function() {
 
-  describe('parse', function() {
-
-    it('should parse a string without an expression', function() {
-      prefixnote.parse('test').should.eql({
-        original: 'test',
-        value: 'test',
-        expressions: []
-      })
+  it('should parse a string without an expression', function() {
+    prefixnote.parse('test').should.eql({
+      original: 'test',
+      value: 'test',
+      expressions: []
     })
-
-    it('should parse basic expressions', function() {
-
-      prefixnote.parse('{a}test').should.eql({
-        original: '{a}test',
-        value: 'test',
-        expressions: [{
-          expression: 'a',
-          args: [],
-          options: {}
-        }]
-      })
-
-      prefixnote.parse('{a}').should.eql({
-        original: '{a}',
-        value: '',
-        expressions: [{
-          expression: 'a',
-          args: [],
-          options: {}
-        }]
-      })
-
-      prefixnote.parse('{a && b}').should.eql({
-        original: '{a && b}',
-        value: '',
-        expressions: [{
-          expression: 'a && b',
-          args: [],
-          options: {}
-        }]
-      })
-
-    })
-
-    it('should parse multiple expressions', function() {
-      prefixnote.parse('{a}{b}test').should.eql({
-        original: '{a}{b}test',
-        value: 'test',
-        expressions: [
-          {
-            expression: 'a',
-            args: [],
-            options: {}
-          },
-          {
-            expression: 'b',
-            args: [],
-            options: {}
-          }
-        ]
-      })
-    })
-
-    it('should parse arguments', function() {
-
-      prefixnote.parse('{: a, b, c}test').should.eql({
-        original: '{: a, b, c}test',
-        value: 'test',
-        expressions: [{
-          expression: null,
-          args: ['a', 'b', 'c'],
-          options: {}
-        }]
-      })
-
-    })
-
-    it('should parse options', function() {
-
-      prefixnote.parse('{: a=1, b=2, c=3}test').should.eql({
-        original: '{: a=1, b=2, c=3}test',
-        value: 'test',
-        expressions: [{
-          expression: null,
-          args: [],
-          options: {
-            a: '1',
-            b: '2',
-            c: '3'
-          }
-        }]
-      })
-
-    })
-
-    it('should parse arguments and options', function() {
-
-      prefixnote.parse('{: a=1, b, c=3}test').should.eql({
-        original: '{: a=1, b, c=3}test',
-        value: 'test',
-        expressions: [{
-          expression: null,
-          args: ['b'],
-          options: {
-            a: '1',
-            c: '3'
-          }
-        }]
-      })
-
-    })
-
   })
 
-  describe('test', function() {
+  it('should parse basic expressions', function() {
 
-    it('should pass for plain strings', function() {
-      prefixnote.test('test', { a: true }).should.eql({
-        expression: null,
-        args: [],
-        options: {}
-      })
-    })
-
-    it('should pass for empty expressions', function() {
-      prefixnote.test('{}test', { a: true }).should.eql({
-        expression: null,
-        args: [],
-        options: {}
-      })
-    })
-
-    it('should evaluate a simple expression with the given data', function() {
-      prefixnote.test('{a}', { a: true }).should.eql({
+    prefixnote.parse('{a}test').should.eql({
+      original: '{a}test',
+      value: 'test',
+      expressions: [{
         expression: 'a',
         args: [],
         options: {}
-      })
-      should.equal(prefixnote.test('{a}', { a: false }), null)
-      should.equal(prefixnote.test('{a}', {}), null)
+      }]
     })
 
-    it('should accept already parsed strings', function() {
-      const parsed = prefixnote.parse('{a}')
-      prefixnote.test(parsed, { a: true }).should.eql({
+    prefixnote.parse('{a}').should.eql({
+      original: '{a}',
+      value: '',
+      expressions: [{
         expression: 'a',
         args: [],
         options: {}
-      })
+      }]
     })
 
-    it('should evaluate a boolean expression', function() {
-      prefixnote.test('{a && b}', {
-        a: true,
-        b: true
-      }).should.eql({
+    prefixnote.parse('{a && b}').should.eql({
+      original: '{a && b}',
+      value: '',
+      expressions: [{
         expression: 'a && b',
         args: [],
         options: {}
-      })
-
-      should.equal(prefixnote.test('{a && b}', {
-        a: true,
-        b: false
-      }), null)
-
-      should.equal(prefixnote.test('{a && b}', {
-        a: false,
-        b: true
-      }), null)
-
-    })
-
-    it('if there are multiple expressions, should return the first one that is true', function() {
-
-      prefixnote.test('{a}{b}', { a: true }).should.eql({
-        expression: 'a',
-        args: [],
-        options: {}
-      })
-
-      prefixnote.test('{a}{b}', { b: true }).should.eql({
-        expression: 'b',
-        args: [],
-        options: {}
-      })
-
-      should.equal(prefixnote.test('{a}{b}', {}), null)
-
+      }]
     })
 
   })
 
-  describe('parseFiles', function() {
+  it('should parse multiple expressions', function() {
+    prefixnote.parse('{a}{b}test').should.eql({
+      original: '{a}{b}test',
+      value: 'test',
+      expressions: [
+        {
+          expression: 'a',
+          args: [],
+          options: {}
+        },
+        {
+          expression: 'b',
+          args: [],
+          options: {}
+        }
+      ]
+    })
+  })
 
-    it('should only parse files whose prefix evaluates to true', function() {
-      const parsedArray = toArray(prefixnote.parseFiles(path.join('test/sample'), {
-        a: false,
-        b: false
-      }))
-      return Promise.join(
-        parsedArray.should.eventually.deep.include({
-          original: path.join('test/sample/{}package.json'),
-          parsed: path.join('test/sample/package.json'),
-          parsedObject: { expression: null, args: [], options: {} }
-        }),
-        parsedArray.should.eventually.deep.include({
-          original: path.join('test/sample/README.md'),
-          parsed: path.join('test/sample/README.md'),
-          parsedObject: { expression: null, args: [], options: {} }
-        }),
-        parsedArray.should.eventually.deep.include({
-          original: path.join('test/sample/LICENSE'),
-          parsed: path.join('test/sample/LICENSE'),
-          parsedObject: { expression: null, args: [], options: {} }
-        })
-      )
+  it('should parse arguments', function() {
+
+    prefixnote.parse('{: a, b, c}test').should.eql({
+      original: '{: a, b, c}test',
+      value: 'test',
+      expressions: [{
+        expression: null,
+        args: ['a', 'b', 'c'],
+        options: {}
+      }]
     })
 
-    it('should parse nested folders', function() {
-      const parsedArray = toArray(prefixnote.parseFiles(path.join('test/sample'), {
-        a: true,
-        a1: true,
-        a2: false,
-        b: false
-      }))// .tap(console.log)
-      return Promise.join(
-        parsedArray.should.eventually.deep.include({
-          original: path.join('test/sample/{}package.json'),
-          parsed: path.join('test/sample/package.json'),
-          parsedObject: { expression: null, args: [], options: {} }
-        }),
-        parsedArray.should.eventually.deep.include({
-          original: path.join('test/sample/LICENSE'),
-          parsed: path.join('test/sample/LICENSE'),
-          parsedObject: { expression: null, args: [], options: {} }
-        }),
-        parsedArray.should.eventually.deep.include({
-          original: path.join('test/sample/README.md'),
-          parsed: path.join('test/sample/README.md'),
-          parsedObject: { expression: null, args: [], options: {} }
-        }),
-        parsedArray.should.eventually.deep.include({
-          original: path.join('test/sample/{a}a/{a1}1'),
-          parsed: path.join('test/sample/a/1'),
-          parsedObject: { expression: 'a1', args: [], options: {} }
-        }),
-        parsedArray.should.eventually.deep.include({
-          original: path.join('test/sample/{a}a/3'),
-          parsed: path.join('test/sample/a/3'),
-          parsedObject: { expression: null, args: [], options: {} }
-        }),
-        parsedArray.should.eventually.deep.include({
-          original: path.join('test/sample/{a}a/4'),
-          parsed: path.join('test/sample/a/4'),
-          parsedObject: { expression: null, args: [], options: {} }
-        })
-      )
+  })
+
+  it('should parse options', function() {
+
+    prefixnote.parse('{: a=1, b=2, c=3}test').should.eql({
+      original: '{: a=1, b=2, c=3}test',
+      value: 'test',
+      expressions: [{
+        expression: null,
+        args: [],
+        options: {
+          a: '1',
+          b: '2',
+          c: '3'
+        }
+      }]
     })
 
-    it('should parse files in null folders as children of the parent', function() {
-      const parsedArray = toArray(prefixnote.parseFiles(path.join('test/sample'), {
-        a: false,
-        b: true
-      }))
-      return Promise.join(
-        parsedArray.should.eventually.deep.include({
-          original: path.join('test/sample/{}package.json'),
-          parsed: path.join('test/sample/package.json'),
-          parsedObject: { expression: null, args: [], options: {} }
-        }),
-        parsedArray.should.eventually.deep.include({
-          original: path.join('test/sample/LICENSE'),
-          parsed: path.join('test/sample/LICENSE'),
-          parsedObject: { expression: null, args: [], options: {} }
-        }),
-        parsedArray.should.eventually.deep.include({
-          original: path.join('test/sample/README.md'),
-          parsed: path.join('test/sample/README.md'),
-          parsedObject: { expression: null, args: [], options: {} }
-        }),
-        parsedArray.should.eventually.deep.include({
-          original: path.join('test/sample/{b}/1'),
-          parsed: path.join('test/sample/1'),
-          parsedObject: { expression: null, args: [], options: {} }
-        }),
-        parsedArray.should.eventually.deep.include({
-          original: path.join('test/sample/{b}/2'),
-          parsed: path.join('test/sample/2'),
-          parsedObject: { expression: null, args: [], options: {} }
-        })
-      )
+  })
+
+  it('should parse arguments and options', function() {
+
+    prefixnote.parse('{: a=1, b, c=3}test').should.eql({
+      original: '{: a=1, b, c=3}test',
+      value: 'test',
+      expressions: [{
+        expression: null,
+        args: ['b'],
+        options: {
+          a: '1',
+          c: '3'
+        }
+      }]
     })
 
+  })
+
+})
+
+describe('test', function() {
+
+  it('should pass for plain strings', function() {
+    prefixnote.test('test', { a: true }).should.eql({
+      expression: null,
+      args: [],
+      options: {}
+    })
+  })
+
+  it('should pass for empty expressions', function() {
+    prefixnote.test('{}test', { a: true }).should.eql({
+      expression: null,
+      args: [],
+      options: {}
+    })
+  })
+
+  it('should evaluate a simple expression with the given data', function() {
+    prefixnote.test('{a}', { a: true }).should.eql({
+      expression: 'a',
+      args: [],
+      options: {}
+    })
+    should.equal(prefixnote.test('{a}', { a: false }), null)
+    should.equal(prefixnote.test('{a}', {}), null)
+  })
+
+  it('should accept already parsed strings', function() {
+    const parsed = prefixnote.parse('{a}')
+    prefixnote.test(parsed, { a: true }).should.eql({
+      expression: 'a',
+      args: [],
+      options: {}
+    })
+  })
+
+  it('should evaluate a boolean expression', function() {
+    prefixnote.test('{a && b}', {
+      a: true,
+      b: true
+    }).should.eql({
+      expression: 'a && b',
+      args: [],
+      options: {}
+    })
+
+    should.equal(prefixnote.test('{a && b}', {
+      a: true,
+      b: false
+    }), null)
+
+    should.equal(prefixnote.test('{a && b}', {
+      a: false,
+      b: true
+    }), null)
+
+  })
+
+  it('if there are multiple expressions, should return the first one that is true', function() {
+
+    prefixnote.test('{a}{b}', { a: true }).should.eql({
+      expression: 'a',
+      args: [],
+      options: {}
+    })
+
+    prefixnote.test('{a}{b}', { b: true }).should.eql({
+      expression: 'b',
+      args: [],
+      options: {}
+    })
+
+    should.equal(prefixnote.test('{a}{b}', {}), null)
+
+  })
+
+})
+
+describe('parseFiles', function() {
+
+  it('should only parse files whose prefix evaluates to true', async () => {
+    const parsedArray = await toArray(prefixnote.parseFiles(path.join('test/sample'), {
+      a: false,
+      b: false
+    }))
+    parsedArray.should.deep.include({
+      original: path.join('test/sample/{}package.json'),
+      parsed: path.join('test/sample/package.json'),
+      parsedObject: { expression: null, args: [], options: {} }
+    }),
+    parsedArray.should.deep.include({
+      original: path.join('test/sample/README.md'),
+      parsed: path.join('test/sample/README.md'),
+      parsedObject: { expression: null, args: [], options: {} }
+    }),
+    parsedArray.should.deep.include({
+      original: path.join('test/sample/LICENSE'),
+      parsed: path.join('test/sample/LICENSE'),
+      parsedObject: { expression: null, args: [], options: {} }
+    })
+  })
+
+  it('should parse nested folders', async () => {
+    const parsedArray = await toArray(prefixnote.parseFiles(path.join('test/sample'), {
+      a: true,
+      a1: true,
+      a2: false,
+      b: false
+    }))// .tap(console.log)
+
+    parsedArray.should.deep.include({
+      original: path.join('test/sample/{}package.json'),
+      parsed: path.join('test/sample/package.json'),
+      parsedObject: { expression: null, args: [], options: {} }
+    }),
+    parsedArray.should.deep.include({
+      original: path.join('test/sample/LICENSE'),
+      parsed: path.join('test/sample/LICENSE'),
+      parsedObject: { expression: null, args: [], options: {} }
+    }),
+    parsedArray.should.deep.include({
+      original: path.join('test/sample/README.md'),
+      parsed: path.join('test/sample/README.md'),
+      parsedObject: { expression: null, args: [], options: {} }
+    }),
+    parsedArray.should.deep.include({
+      original: path.join('test/sample/{a}a/{a1}1'),
+      parsed: path.join('test/sample/a/1'),
+      parsedObject: { expression: 'a1', args: [], options: {} }
+    }),
+    parsedArray.should.deep.include({
+      original: path.join('test/sample/{a}a/3'),
+      parsed: path.join('test/sample/a/3'),
+      parsedObject: { expression: null, args: [], options: {} }
+    }),
+    parsedArray.should.deep.include({
+      original: path.join('test/sample/{a}a/4'),
+      parsed: path.join('test/sample/a/4'),
+      parsedObject: { expression: null, args: [], options: {} }
+    })
+  })
+
+  it('should parse files in null folders as children of the parent', async () => {
+    const parsedArray = await toArray(prefixnote.parseFiles(path.join('test/sample'), {
+      a: false,
+      b: true
+    }))
+    parsedArray.should.deep.include({
+      original: path.join('test/sample/{}package.json'),
+      parsed: path.join('test/sample/package.json'),
+      parsedObject: { expression: null, args: [], options: {} }
+    }),
+    parsedArray.should.deep.include({
+      original: path.join('test/sample/LICENSE'),
+      parsed: path.join('test/sample/LICENSE'),
+      parsedObject: { expression: null, args: [], options: {} }
+    }),
+    parsedArray.should.deep.include({
+      original: path.join('test/sample/README.md'),
+      parsed: path.join('test/sample/README.md'),
+      parsedObject: { expression: null, args: [], options: {} }
+    }),
+    parsedArray.should.deep.include({
+      original: path.join('test/sample/{b}/1'),
+      parsed: path.join('test/sample/1'),
+      parsedObject: { expression: null, args: [], options: {} }
+    }),
+    parsedArray.should.deep.include({
+      original: path.join('test/sample/{b}/2'),
+      parsed: path.join('test/sample/2'),
+      parsedObject: { expression: null, args: [], options: {} }
+    })
   })
 
 })
