@@ -23,7 +23,7 @@
     "dsl",
     "filter"
   ],
-  "author": "Raine Lourie",
+  "author": "Raine Revere",
   "license": "ISC",
   "devDependencies": {
     "chai": "^4.2.0",
