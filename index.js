@@ -1,39 +1,44 @@
-var Readable   = require('stream').Readable
-var esprima    = require('esprima')
-var staticEval = require('static-eval')
-var Promise    = require('bluebird')
-var compact    = require('lodash.compact')
-var find       = require('lodash.find')
-var execAll    = require('regexp.execall')
-var fs         = require('fs')
-var path       = require('path')
+const Readable = require('stream').Readable
+const esprima = require('esprima')
+const staticEval = require('static-eval')
+const Promise = require('bluebird')
+const compact = require('lodash.compact')
+const find = require('lodash.find')
+const execAll = require('regexp.execall')
+const fs = require('fs')
+const path = require('path')
 
 Promise.promisifyAll(fs)
 
-var stringRegex         = /^({.*})?(.*?)$/
-var allExpressionsRegex = /{(.*?)}/g
-var expressionRegex     = /([^:]*)?(?::\s*(.*))?/
-var argsRegex           = /\s*,\s*/
+const stringRegex = /^({.*})?(.*?)$/
+const allExpressionsRegex = /{(.*?)}/g
+const expressionRegex = /([^:]*)?(?::\s*(.*))?/
+const argsRegex = /\s*,\s*/
 
 /**
  * Private function that parses a prefixnote expression.
- *   e.g. foo
- *        foo && bar
- *        foo:val1
- *        foo:arg1=val1
- * @returns { expression, args, options }
+ * e.g.
+ * - foo
+ * - foo && bar
+ * - foo:val1
+ * - foo:arg1=val1
+ *
+ * @returns
  */
 function parseExpression(str) {
 
-  var expMatches = str.match(expressionRegex)
+  const expMatches = str.match(expressionRegex)
 
   // get the args from the second match
   // extract options from args using filter with side effect
-  var options = {}
-  var args = compact((expMatches[2] || '').split(argsRegex))
+  const options = {}
+  const args = compact((expMatches[2] || '').split(argsRegex))
     .filter(function (arg) {
-      var keyValue = arg.split('=')
-      return keyValue.length === 1 || (options[keyValue[0]] = keyValue[1], false)
+      const keyValue = arg.split('=')
+      if (keyValue.length !== 1) {
+        options[keyValue[0]] = keyValue[1]
+      }
+      return keyValue.length === 1
     })
 
   return {
@@ -45,36 +50,40 @@ function parseExpression(str) {
 
 /**
  * Parses a string with one or more prefixnote expressions. Extracts and parses each expression.
- * @returns { original, value, expressions }
+ *
+ * @returns
  */
 function parse(str) {
 
   // find the prefix expressions and the main value
-  var stringMatches = str.match(stringRegex)
-  var allExpString = stringMatches[1] || ''
-  var value = stringMatches[2]
+  const stringMatches = str.match(stringRegex)
+  const allExpString = stringMatches[1] || ''
+  const value = stringMatches[2]
 
   // parse each prefix expression
-  var expressions = execAll(allExpressionsRegex, allExpString)
+  const expressions = execAll(allExpressionsRegex, allExpString)
     // grab the expression content inside the braces
-    .map(function (match) { return match[1] })
+    .map(function (match) {
+      return match[1]
+    })
     .map(parseExpression)
 
   return {
-    original:   str,
-    value:      value,
+    original: str,
+    value: value,
     expressions: expressions
   }
 }
 
 /**
  * Evaluates the given prefixnote with the given data.
+ *
  * @param prefixnote     May be an unparsed prefixnote string or a parsed prefixnote object (e.g. { original, value, expressions }).
  * @returns The first expression that evaluates to true, otherwise null.
  */
 function test(prefixnote, data) {
 
-  var parsed = typeof prefixnote === 'string' ? parse(prefixnote) : prefixnote
+  const parsed = typeof prefixnote === 'string' ? parse(prefixnote) : prefixnote
 
   // no expressions should pass
   return parsed.original === parsed.value ?
@@ -84,29 +93,30 @@ function test(prefixnote, data) {
     find(parsed.expressions, function (exp) {
 
       // empty expressions should pass
-      if(exp.expression === null) {
-        return true;
+      if (exp.expression === null) {
+        return true
       }
       else {
-        var ast = esprima.parse(exp.expression).body[0].expression
+        const ast = esprima.parse(exp.expression).body[0].expression
         return staticEval(ast, data)
       }
     }) || null
 }
 
-// TODO: Convert to a generator function.
+// TODO: Convert to async iterable.
 /**
  * Recursively traverses a file tree starting at the given path, treating each filename as a prefixnote. If the prefixnote evalutes to true for the given data, the branch is traversed, otherwise it is ignored.
+ *
  * @returns A stream of parsed filenames.
  */
 function parseFiles(dirname, data) {
 
   // create a readable stream that will be returned
   // parse objects will be pushed onto the stream as we traverse the file tree
-  var stream = new Readable({ objectMode: true })
+  const stream = new Readable({ objectMode: true })
   stream._read = function () {}
   parseRecursive(dirname).then(function () {
-    stream.push(null)
+    stream.push(null) // eslint-disable-line fp/no-mutating-methods
   })
   return stream
 
@@ -120,20 +130,21 @@ function parseFiles(dirname, data) {
     // return a promise so we know when this completes
     return fs.readdirAsync(dirname).map(function (filename) {
 
-      var filePath = path.join(dirname, filename)
-      var parsed = parse(filename)
-      var expression = test(parsed, data)
+      const filePath = path.join(dirname, filename)
+      const parsed = parse(filename)
+      const expression = test(parsed, data)
 
       return expression ?
 
         fs.statAsync(filePath).then(function (stat) {
 
           // generate the destination path
-          var newName = parsed.value
-          var newPath = path.join(newDirname, newName)
+          const newName = parsed.value
+          const newPath = path.join(newDirname, newName)
 
           // if it's a file, push the parse object onto the stream
-          if(stat.isFile()) {
+          if (stat.isFile()) {
+            // eslint-disable-next-line fp/no-mutating-methods
             stream.push({
               original: filePath,
               parsed: newPath,
@@ -151,7 +162,7 @@ function parseFiles(dirname, data) {
 }
 
 module.exports = {
-  parse: parse,
-  test: test,
-  parseFiles: parseFiles
+  parse,
+  test,
+  parseFiles,
 }

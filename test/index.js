@@ -1,13 +1,12 @@
 const path = require('path')
-var chai = require('chai')
-var should = chai.should()
-var expect = chai.expect
-var prefixnote = require('../index.js')
-var toArray = require('stream-to-array')
-var Promise = require('bluebird')
+const chai = require('chai')
+const should = chai.should()
+const prefixnote = require('../index.js')
+const toArray = require('stream-to-array')
+const Promise = require('bluebird')
 
 chai.use(require('chai-things'))
-chai.use(require("chai-as-promised"));
+chai.use(require('chai-as-promised'))
 
 describe('prefixnote', function() {
 
@@ -154,7 +153,7 @@ describe('prefixnote', function() {
     })
 
     it('should accept already parsed strings', function() {
-      var parsed = prefixnote.parse('{a}')
+      const parsed = prefixnote.parse('{a}')
       prefixnote.test(parsed, { a: true }).should.eql({
         expression: 'a',
         args: [],
@@ -186,13 +185,13 @@ describe('prefixnote', function() {
 
     it('if there are multiple expressions, should return the first one that is true', function() {
 
-      prefixnote.test('{a}{b}', {a:true}).should.eql({
+      prefixnote.test('{a}{b}', { a: true }).should.eql({
         expression: 'a',
         args: [],
         options: {}
       })
 
-      prefixnote.test('{a}{b}', {b:true}).should.eql({
+      prefixnote.test('{a}{b}', { b: true }).should.eql({
         expression: 'b',
         args: [],
         options: {}
@@ -204,11 +203,10 @@ describe('prefixnote', function() {
 
   })
 
-
   describe('parseFiles', function() {
 
     it('should only parse files whose prefix evaluates to true', function() {
-      var parsedArray = toArray(prefixnote.parseFiles(path.join('test/sample'), {
+      const parsedArray = toArray(prefixnote.parseFiles(path.join('test/sample'), {
         a: false,
         b: false
       }))
@@ -232,12 +230,12 @@ describe('prefixnote', function() {
     })
 
     it('should parse nested folders', function() {
-      var parsedArray = toArray(prefixnote.parseFiles(path.join('test/sample'), {
+      const parsedArray = toArray(prefixnote.parseFiles(path.join('test/sample'), {
         a: true,
         a1: true,
         a2: false,
         b: false
-      }))//.tap(console.log)
+      }))// .tap(console.log)
       return Promise.join(
         parsedArray.should.eventually.deep.include({
           original: path.join('test/sample/{}package.json'),
@@ -273,7 +271,7 @@ describe('prefixnote', function() {
     })
 
     it('should parse files in null folders as children of the parent', function() {
-      var parsedArray = toArray(prefixnote.parseFiles(path.join('test/sample'), {
+      const parsedArray = toArray(prefixnote.parseFiles(path.join('test/sample'), {
         a: false,
         b: true
       }))
