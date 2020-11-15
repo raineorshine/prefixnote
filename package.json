@@ -27,7 +27,7 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-things": "^0.2.0",
-    "mocha": "^7.0.0",
+    "mocha": "^8.2.1",
     "stream-to-array": "^2.3.0"
   },
   "dependencies": {
@@ -36,6 +36,6 @@
     "lodash.compact": "^3.0.1",
     "lodash.find": "^4.6.0",
     "regexp.execall": "^1.0.2",
-    "static-eval": "^2.0.3"
+    "static-eval": "^2.1.0"
   }
 }
