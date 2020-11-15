@@ -211,12 +211,12 @@ describe('parseFiles', function() {
       original: path.join('test/sample/{}package.json'),
       parsed: path.join('test/sample/package.json'),
       parsedObject: { expression: null, args: [], options: {} }
-    }),
+    })
     parsedArray.should.deep.include({
       original: path.join('test/sample/README.md'),
       parsed: path.join('test/sample/README.md'),
       parsedObject: { expression: null, args: [], options: {} }
-    }),
+    })
     parsedArray.should.deep.include({
       original: path.join('test/sample/LICENSE'),
       parsed: path.join('test/sample/LICENSE'),
@@ -236,27 +236,27 @@ describe('parseFiles', function() {
       original: path.join('test/sample/{}package.json'),
       parsed: path.join('test/sample/package.json'),
       parsedObject: { expression: null, args: [], options: {} }
-    }),
+    })
     parsedArray.should.deep.include({
       original: path.join('test/sample/LICENSE'),
       parsed: path.join('test/sample/LICENSE'),
       parsedObject: { expression: null, args: [], options: {} }
-    }),
+    })
     parsedArray.should.deep.include({
       original: path.join('test/sample/README.md'),
       parsed: path.join('test/sample/README.md'),
       parsedObject: { expression: null, args: [], options: {} }
-    }),
+    })
     parsedArray.should.deep.include({
       original: path.join('test/sample/{a}a/{a1}1'),
       parsed: path.join('test/sample/a/1'),
       parsedObject: { expression: 'a1', args: [], options: {} }
-    }),
+    })
     parsedArray.should.deep.include({
       original: path.join('test/sample/{a}a/3'),
       parsed: path.join('test/sample/a/3'),
       parsedObject: { expression: null, args: [], options: {} }
-    }),
+    })
     parsedArray.should.deep.include({
       original: path.join('test/sample/{a}a/4'),
       parsed: path.join('test/sample/a/4'),
@@ -273,22 +273,22 @@ describe('parseFiles', function() {
       original: path.join('test/sample/{}package.json'),
       parsed: path.join('test/sample/package.json'),
       parsedObject: { expression: null, args: [], options: {} }
-    }),
+    })
     parsedArray.should.deep.include({
       original: path.join('test/sample/LICENSE'),
       parsed: path.join('test/sample/LICENSE'),
       parsedObject: { expression: null, args: [], options: {} }
-    }),
+    })
     parsedArray.should.deep.include({
       original: path.join('test/sample/README.md'),
       parsed: path.join('test/sample/README.md'),
       parsedObject: { expression: null, args: [], options: {} }
-    }),
+    })
     parsedArray.should.deep.include({
       original: path.join('test/sample/{b}/1'),
       parsed: path.join('test/sample/1'),
       parsedObject: { expression: null, args: [], options: {} }
-    }),
+    })
     parsedArray.should.deep.include({
       original: path.join('test/sample/{b}/2'),
       parsed: path.join('test/sample/2'),
