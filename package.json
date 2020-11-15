@@ -1,6 +1,6 @@
 {
   "name": "prefixnote",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Annotate strings with simple, embedded prefix expressions.",
   "engines": {
     "node": ">=10"
